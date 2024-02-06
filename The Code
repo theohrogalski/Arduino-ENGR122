@@ -1,5 +1,8 @@
 #include <Servo.h> 
+#include <Ultrasonic.h>
 
+int distance;
+Ultrasonic ultrasonic_one(D8, D5);
 #define motor1pin D0
 #define motor2pin D2 
 
@@ -52,7 +55,7 @@ void left(int time)
 
 }
 
- # 250 milliseconds translates into 90 degrees
+ //250 milliseconds translates into 90 degrees
 
 void setup()
 {
@@ -60,12 +63,15 @@ void setup()
       motor2.attach(motor2pin);
       motor1.write(90); 
       motor2.write(90);
-      right(250);
-      left(500);
+      Serial.begin(115200);
 }
 
 
 void loop() 
 {
+      distance = ultrasonic_one.read(CM)* 10;
 
+      Serial.println(distance);
+
+      delay(1000);
 }
