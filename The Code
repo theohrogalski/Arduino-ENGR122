@@ -1,77 +1,77 @@
 #include <Servo.h> 
 #include <Ultrasonic.h>
+#include <Wire.h>
+#include "SSD1306.h"
+int power; //simulate motor power level
+
 
 int distance;
 Ultrasonic ultrasonic_one(D8, D5);
-#define motor1pin D0
+Ultrasonic ultrasonic_two(D11, D12);
+#define motor1pin D3 
 #define motor2pin D2 
 
 Servo motor1; 
 Servo motor2;
 
-void forward(int time)
+int motor1Value = 57;
 
-{
 
+void forward(int length, Servo motor1, Servo motor2){
+  motor1.write(0);
+  motor2.write(0);
+    delay(length);
+}
+void backwards(int length, Servo motor1, Servo motor2){
+  motor1.write(180);
+  motor2.write(180);
+    delay(length);
+}
+
+void left(int length, Servo motor1, Servo motor2){
+  motor1.write(0);
+  motor2.write(90);
+    delay(length);
+}
+
+void right(int length){
+  motor1.write(90);
+  motor2.write(0);
+    delay(length);
+}
+
+void setup(){
+  motor1.attach(motor1pin); 
+  motor2.attach(motor2pin);
+  Serial.begin(115200);
+}
+
+void loop() {
+  int distanceFwd = ultrasonic_one.read(CM)* 10;
+  int distanceSide = ultrasonic_two.read(CM)*10;
+  Serial.println("Below is distance FORWARD");
+  Serial.println(distanceFwd);
+  Serial.println("Below is distance SIDE");
+  Serial.println(distanceSide);
+
+
+  if (distanceFwd < 75) {
+    motor1.write(123);
+    motor2.write(180);
+    delay(650);
+    motor1Value = 57;
+  } else {
+    if (distanceSide < 60){
+      motor1.write(90);
+      delay(75);
+    }
+    if (distanceSide > 100){
       motor1.write(0);
-      motor2.write(180);
-      delay(time);
-      motor1.write(90);
-      motor2.write(90);
-
+      delay(75);
+  }
+    motor1.write(motor1Value);
+    motor2.write(180);
+    delay(75);
+  }
 }
 
-void backward(int time)
-
-{
-
-      motor1.write(180);
-      motor2.write(180);
-      delay(time);
-      motor1.write(90);
-      motor2.write(90);
-
-}
-void right(int time)
-
-{
-
-      motor1.write(180);
-      motor2.write(180);
-      delay(time);
-      motor1.write(90);
-      motor2.write(90);
-
-}
-void left(int time)
-
-{
-
-      motor1.write(0);
-      motor2.write(0);
-      delay(time);
-      motor1.write(90);
-      motor2.write(90);
-
-}
-
- //250 milliseconds translates into 90 degrees
-
-void setup()
-{
-      motor1.attach(motor1pin); 
-      motor2.attach(motor2pin);
-      motor1.write(90); 
-      motor2.write(90);
-      Serial.begin(115200);
-}
-
-
-void loop() 
-{
-      distance = ultrasonic_one.read(CM)* 10;
-
-      Serial.println(distance);
-
-      delay(1000);
-}
